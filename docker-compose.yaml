@@ -1,0 +1,27 @@
+services:
+  estante_digital_database:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: estante_digital_user
+      POSTGRES_DB: estante_digital_db
+      POSTGRES_PASSWORD: vasco_da_gama
+    ports:
+      - "5432:5432"
+
+  estante_digital_app:
+    image: estante_digital
+    entrypoint: ./entrypoint.sh
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - estante_digital_database
+    environment:
+      DATABASE_URL: postgresql+psycopg://estante_digital_user:vasco_da_gama@estante_digital_database:5432/estante_digital_db
+
+volumes:
+  pgdata:
